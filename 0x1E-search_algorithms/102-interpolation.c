@@ -1,41 +1,56 @@
 #include "search_algos.h"
+#include <stdio.h>
 
 /**
-  * interpolation_search - Search for a value in a sorted array
-  *                        of integers using interpolation search.
-  * @array: A pointer to the first element of the array to search.
-  * @size: The number of elements in the array.
-  * @value: The value to search for.
-  *
-  * Return: If the value is not present or the array is NULL, -1.
-  *         else, the first index where the value is located.
-  *
-  * Description: Prints a value every time it is compared in the array..
-  */
+ * interpolation_search - Search for a value in a sorted array
+ *				of integers using interpolation search.
+ * @array: A pointer to the first element of the array to search.
+ * @size: The number of elements in the array.
+ * @value: The value to search for.
+ *
+ * Return: If the value is not present or the array is NULL, -1.
+ *	else, the first index where the value is located.
+ *
+ * Description: Prints a value every time it is compared in the array.
+ */
+
 int interpolation_search(int *array, size_t size, int value)
 {
-	size_t a, b, c;
+	size_t low, high, pos;
 
-	if (array == NULL)
+	if (array == NULL || size == 0)
 		return (-1);
 
-	for (b = 0, c = size - 1; c >= b;)
+	low = 0;
+	high = size - 1;
+
+	while (low <= high && value >= array[low] && value <= array[high])
 	{
-		a = b + (((double)(c - b) / (array[c] - array[b])) * (value - array[c]));
-		if (a < size)
-			printf("Value checked array[%ld] = [%d]\n", a, array[a]);
-		else
+		if (low == high)
 		{
-			printf("Value checked array[%ld] is out of range\n", a);
+			if (array[low] == value)
+				return (low);
+			return (-1);
+		}
+
+		pos = low + (((double)(high - low) / (array[high] - array[low])) *
+			(value - array[low]));
+
+		if (pos >= size)
+		{
+			printf("Value checked array[%ld] is out of range\n", pos);
 			break;
 		}
 
-		if (array[a] == value)
-			return (a);
-		if (array[a] > value)
-			c = a - 1;
+		printf("Value checked array[%ld] =[%d]\n", pos, array[pos]);
+
+		if (array[pos] == value)
+			return (pos);
+
+		if (array[pos] < value)
+			low = pos + 1;
 		else
-			b = a + 1;
+			high = pos - 1;
 	}
 
 	return (-1);
