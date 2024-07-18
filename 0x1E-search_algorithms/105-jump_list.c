@@ -1,10 +1,12 @@
 #include "search_algos.h"
+#include <stdio.h>
+#include <math.h>
 
 /**
- *jump_list - Searches for an algorithm in a sorted singly
- *            linked list of integers using jump search.
+ *jump_list - Searches for a value in a sorted singly linked list
+ *            of integers using jump search.
  *@list: A pointer to the head of the linked list to search.
- *@size: The number of nodes in the list.
+ *@size: The number of nodes in the list (not used directly in function).
  *@value: The value to search for.
  *
  *Return: If the value is not present or the head of the list is NULL, NULL.
@@ -18,34 +20,36 @@ listint_t* jump_list(listint_t *list, size_t size, int value)
 	size_t step, step_size;
 	listint_t *node, *jump;
 
-	if (list == NULL || size == 0)
-		return (NULL);
+	if (list == NULL)
+		return NULL;
 
-	step = 0;
-	step_size = sqrt(size);
-	node = jump = list;
+	step_size = sqrt(size);	// Calculate jump step size
+	node = list;
+	jump = list;
 
-	while (jump->index + 1 < size && jump->n < value)
+	// Perform jump search
+	while (jump && jump->n < value)
 	{
 		node = jump;
-		for (step += step_size; jump->index < step; jump = jump->next)
+		step = step_size;
+
+		while (jump->next && jump->index < step)
 		{
-			if (jump->index + 1 == size)
-				break;
+			jump = jump->next;
 		}
 
 		printf("Value checked at index[%ld] =[%d]\n", jump->index, jump->n);
 	}
 
-	printf("Value found between indexes[%ld] and[%ld]\n", node->index, jump->index);
+	printf("Value found between indexes[%ld] and[%ld]\n",
+		node->index, jump->index);
 
-	while (node->index < jump->index && node->n < value)
+	// Linear search in the sublist found by jump search
+	while (node && node->n < value)
 	{
 		printf("Value checked at index[%ld] =[%d]\n", node->index, node->n);
 		node = node->next;
 	}
 
-	printf("Value checked at index[%ld] =[%d]\n", node->index, node->n);
-
-	return (node->n == value ? node : NULL);
+	return (node && node->n == value) ? node : NULL;
 }
